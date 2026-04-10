@@ -46,6 +46,11 @@ const TOOLS = [
     detect: '.claude',
     files: [
       {
+        src: 'commands/claude/slate-bar.md',
+        dest: '.claude/commands/slate-bar.md',
+        label: 'slash command',
+      },
+      {
         src: 'skill/SKILL.md',
         dest: '.claude/skills/slate-bar/SKILL.md',
         label: 'agent skill',
@@ -68,6 +73,11 @@ const TOOLS = [
     detect: '.gemini',
     files: [
       {
+        src: 'commands/gemini/slate-bar.toml',
+        dest: '.gemini/commands/slate-bar.toml',
+        label: 'slash command',
+      },
+      {
         src: 'skill/SKILL.md',
         dest: '.gemini/skills/slate-bar/SKILL.md',
         label: 'agent skill',
@@ -79,6 +89,11 @@ const TOOLS = [
     detect: '.kiro',
     files: [
       {
+        src: 'commands/kiro/slate-bar.md',
+        dest: '.kiro/steering/slate-bar.md',
+        label: 'slash command (steering file)',
+      },
+      {
         src: 'skill/SKILL.md',
         dest: '.kiro/skills/slate-bar/SKILL.md',
         label: 'agent skill',
@@ -89,6 +104,11 @@ const TOOLS = [
     name: 'Windsurf',
     detect: '.windsurf',
     files: [
+      {
+        src: 'commands/windsurf/slate-bar.md',
+        dest: '.windsurf/workflows/slate-bar.md',
+        label: 'workflow (slash command)',
+      },
       {
         src: 'skill/SKILL.md',
         dest: '.windsurf/skills/slate-bar/SKILL.md',
@@ -105,7 +125,7 @@ function init() {
 
   if (detected.length === 0) {
     console.log('\n  No AI tool config folders detected in this project.')
-    console.log('  Detected by looking for: .cursor, .claude, .codex, .gemini, .kiro, .windsurf')
+    console.log('  Looked for: .cursor, .claude, .codex, .gemini, .kiro, .windsurf')
     console.log('\n  Scaffolding into a universal location instead:\n')
     scaffold([
       {
@@ -135,10 +155,14 @@ function init() {
   scaffold(allFiles)
 
   console.log('')
-  if (detected.some((t) => t.name === 'Cursor')) {
-    console.log('  Cursor: type /slate-bar in chat to use the slash command.')
+  const commandTools = detected.filter((t) =>
+    t.files.some((f) => f.label.includes('slash command') || f.label.includes('workflow')),
+  )
+  if (commandTools.length > 0) {
+    console.log('  Slash commands installed for: ' + commandTools.map((t) => t.name).join(', '))
+    console.log('  Type /slate-bar in your AI tool\'s chat to use it.')
   }
-  console.log('  All tools: the SKILL.md will be picked up automatically.\n')
+  console.log('  Agent skills will be picked up automatically.\n')
 }
 
 function scaffold(files) {

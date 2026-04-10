@@ -1,6 +1,6 @@
 {
   "name": "slate-bar",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A floating overlay toolbar that injects design variant previews into any localhost page",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -44,6 +44,7 @@
   "files": [
     "dist",
     "bin",
+    "commands",
     "cursor-commands",
     "skill",
     "templates/catalog.md"

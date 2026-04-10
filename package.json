@@ -39,7 +39,7 @@
     }
   },
   "bin": {
-    "slate-bar": "./bin/cli.mjs"
+    "slate-bar": "bin/cli.mjs"
   },
   "files": [
     "dist",

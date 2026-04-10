@@ -10,20 +10,6 @@ const cwd = process.cwd()
 
 const command = process.argv[2]
 
-if (command === 'init') {
-  init()
-} else {
-  console.log(`
-  slate-bar CLI
-
-  Commands:
-    init    Scaffold agent skill + commands into the current project
-
-  Usage:
-    npx slate-bar init
-  `)
-}
-
 const TOOLS = [
   {
     name: 'Cursor',
@@ -117,6 +103,20 @@ const TOOLS = [
     ],
   },
 ]
+
+if (command === 'init') {
+  init()
+} else {
+  console.log(`
+  slate-bar CLI
+
+  Commands:
+    init    Scaffold agent skill + commands into the current project
+
+  Usage:
+    npx slate-bar init
+  `)
+}
 
 function init() {
   const detected = TOOLS.filter((t) =>

@@ -2,49 +2,51 @@
 description: slate-bar — variants toolbar, placement, and Copy-to-agent workflow
 ---
 
-Use this when the user is working with **slate-bar** (the floating localhost variant toolbar) or wants to set up variant previews and copy instructions for an AI agent.
+Use this when the user is working with **slate-bar** (the floating variant toolbar) or wants to set up variant previews and copy instructions for an AI agent.
 
 ## What slate-bar does
 
 - Injects a bottom pill bar with prev/next variants, **Copy**, and **Settings**.
 - **Copy** puts a structured prompt on the clipboard: cohesion rules, **placement** (where to wire the component in the real app), optional project context, then reference HTML.
 
-## Placement (exact location in the product)
+## Preview placement (CRITICAL — read this first)
 
-The copied prompt must tell the implementer **where** the component lives—not only what it looks like.
+**If you skip this, variants render at the BOTTOM of the page (above the footer) — not where the user asked.** This is the #1 mistake agents make.
 
-### Rule for AI agents writing code
+You MUST place `<div id="slate-preview"></div>` in the page at the exact position the user specified:
 
-Whenever you introduce or edit **`SlateBar.load()`** or **`useSlateBar()`**, you **must** set **`placement`** (and **`cohesionContext`** when the stack is known). Do **not** rely on chat memory.
+```jsx
+<Hero />
+<div id="slate-preview"></div>   {/* ← variants render HERE */}
+<Features />
+```
 
-- Derive `placement` from the user’s request (e.g. “under the hero” → concrete file + sibling components).
-- Use **specific** strings: route/file path, JSX order (`below <Hero />`, `before <Features />`), not vague “on the landing page.”
+Without this div, slate-bar auto-creates one after the last `<section>` — which is almost always wrong. The `placement` text option is for the clipboard copy only; the live preview position depends entirely on where this div sits in the DOM.
 
-1. **Settings (gear)** → field **“Where it goes in the app”** — persists in `localStorage` (`slate-bar-placement`). Examples:
-   - `Below <MarketingHero /> in app/(marketing)/page.tsx, before the Features section.`
-   - `Inside src/routes/dashboard.tsx: add after the stats row, same grid as existing cards.`
+### Do NOT
 
-2. **Code** — `SlateBar.load(variants, { placement: '...' })` syncs into that same storage when `placement` is passed (including `''` to clear).
+- Let slate-bar auto-create the preview div (it defaults to the bottom of the page)
+- Put the preview div at the end of the page
+- Forget to add the preview div entirely
+- Assume slate-bar will figure out placement from the `placement` text option
+
+## Placement text (for clipboard/copy)
+
+Whenever you introduce or edit **`SlateBar.load()`** or **`useSlateBar()`**, you **must** also set **`placement`** (and **`cohesionContext`** when the stack is known). Do **not** rely on chat memory.
+
+- Derive `placement` from the user's request (e.g. "under the hero" → concrete file + sibling components).
+- Use **specific** strings: route/file path, JSX order (`below <Hero />`, `before <Features />`), not vague "on the landing page."
+
+1. **Settings (gear)** → field **"Where it goes in the app"** — persists in `localStorage` (`slate-bar-placement`).
+
+2. **Code** — `SlateBar.load(variants, { placement: '...' })` syncs into that same storage when `placement` is passed.
 
 3. When suggesting edits, **write placement text the user can paste** if they have not filled it yet.
 
 ## Cohesion
 
 - Recommend `cohesionContext` for stack, token paths, and components to reuse.
-- Remind them to **@-reference** real files (layout, theme, a “gold standard” section) in the same chat as the paste.
-
-## Using this file in your AI tool
-
-Tools name this differently; the **content** is portable.
-
-- **Cursor:** save as `.cursor/commands/slate-bar.md` — then **`/slate-bar`** in chat runs it.
-- **Elsewhere:** import as a **skill**, **workflow**, **project instruction**, or paste into a saved prompt — whatever your IDE or agent supports.
-
-This file does **not** install or run the npm package; it only guides the agent. The **slate-bar** package and README hold the API.
-
-### Placement is not auto-read from chat
-
-**slate-bar** does not scrape chats or infer placement. Placement comes from **Settings → Where it goes** (persisted in the browser) or from the `placement` option in `SlateBar.load()` / `useSlateBar()`. Same-thread chats may still “remember” if the user only spoke the location; putting it in Settings or `placement` makes **Copy** self-contained for any tool.
+- Remind them to **@-reference** real files (layout, theme, a "gold standard" section) in the same chat as the paste.
 
 ## Setup reminder (if needed)
 

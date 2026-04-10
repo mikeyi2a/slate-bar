@@ -23,10 +23,41 @@ You are helping a user who has **slate-bar** installed (or wants to install it).
 
 1. **Analyze the existing site first.** Read the layout, theme, tokens, components, and visual language already in the project. Every variant you generate must feel native to that product.
 2. **Generate variants** as `{ name: string, html: string }` objects — custom to the project's design, not generic templates.
-3. **Wire them** into `SlateBar.load(variants, options)` or `useSlateBar(variants, options)`.
-4. **Always set `placement`** — derive it from what the user asked. Include the real file path, parent component, and sibling order.
-5. **Always set `cohesionContext`** when you know the stack.
-6. **Set `uiLibraries`** if the project uses component libraries.
+3. **Place `<div id="slate-preview"></div>` at the EXACT location** where the user wants to see variants. See "Preview placement" below — this is critical.
+4. **Wire them** into `SlateBar.load(variants, options)` or `useSlateBar(variants, options)`.
+5. **Always set `placement`** — derive it from what the user asked. Include the real file path, parent component, and sibling order.
+6. **Always set `cohesionContext`** when you know the stack.
+7. **Set `uiLibraries`** if the project uses component libraries.
+
+## Preview placement (CRITICAL — read this)
+
+**If you skip this, variants will render at the BOTTOM of the page (above the footer) — not where the user asked.** This is the #1 mistake agents make.
+
+slate-bar renders variant HTML into a `<div id="slate-preview">`. If that div doesn't exist on the page, slate-bar creates one **after the last `<section>` element** — which is almost always the wrong place.
+
+### What you MUST do
+
+**Create `<div id="slate-preview"></div>` in the page at the exact position the user specified.** Examples:
+
+- User says "below the hero": place `<div id="slate-preview"></div>` immediately after the hero component/section in the JSX/HTML.
+- User says "between features and pricing": place it between those two components.
+- User says "replace the current testimonials section": place it where the testimonials section is.
+
+```jsx
+<Hero />
+<div id="slate-preview"></div>   {/* ← variants render HERE */}
+<Features />
+<Pricing />
+```
+
+### Do NOT
+
+- Let slate-bar auto-create the preview div (it defaults to the bottom of the page)
+- Put the preview div at the end of the page
+- Forget to add the preview div entirely
+- Assume slate-bar will figure out placement from the `placement` text option
+
+The `placement` text option in `SlateBar.load()` is for the **clipboard copy** (so the implementing agent knows where to wire the final component). The **live preview position** is determined solely by where `<div id="slate-preview"></div>` sits in the DOM.
 
 ## Built-in templates (fallback only)
 

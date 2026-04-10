@@ -5,22 +5,37 @@ Use this when the user is working with **slate-bar** (the floating variant toolb
 - Injects a bottom pill bar with prev/next variants, **Copy**, and **Settings**.
 - **Copy** puts a structured prompt on the clipboard: cohesion rules, **placement** (where to wire the component in the real app), optional project context, then reference HTML.
 
-## Placement (exact location in the product)
+## Preview placement (CRITICAL — read this first)
 
-The copied prompt must tell the implementer **where** the component lives—not only what it looks like.
+**If you skip this, variants render at the BOTTOM of the page (above the footer) — not where the user asked.** This is the #1 mistake agents make.
 
-### Rule for AI agents writing code
+You MUST place `<div id="slate-preview"></div>` in the page at the exact position the user specified:
 
-Whenever you introduce or edit **`SlateBar.load()`** or **`useSlateBar()`**, you **must** set **`placement`** (and **`cohesionContext`** when the stack is known). Do **not** rely on chat memory.
+```jsx
+<Hero />
+<div id="slate-preview"></div>   {/* ← variants render HERE */}
+<Features />
+```
+
+Without this div, slate-bar auto-creates one after the last `<section>` — which is almost always wrong. The `placement` text option is for the clipboard copy only; the live preview position depends entirely on where this div sits in the DOM.
+
+### Do NOT
+
+- Let slate-bar auto-create the preview div (it defaults to the bottom of the page)
+- Put the preview div at the end of the page
+- Forget to add the preview div entirely
+- Assume slate-bar will figure out placement from the `placement` text option
+
+## Placement text (for clipboard/copy)
+
+Whenever you introduce or edit **`SlateBar.load()`** or **`useSlateBar()`**, you **must** also set **`placement`** (and **`cohesionContext`** when the stack is known). Do **not** rely on chat memory.
 
 - Derive `placement` from the user's request (e.g. "under the hero" → concrete file + sibling components).
 - Use **specific** strings: route/file path, JSX order (`below <Hero />`, `before <Features />`), not vague "on the landing page."
 
-1. **Settings (gear)** → field **"Where it goes in the app"** — persists in `localStorage` (`slate-bar-placement`). Examples:
-   - `Below <MarketingHero /> in app/(marketing)/page.tsx, before the Features section.`
-   - `Inside src/routes/dashboard.tsx: add after the stats row, same grid as existing cards.`
+1. **Settings (gear)** → field **"Where it goes in the app"** — persists in `localStorage` (`slate-bar-placement`).
 
-2. **Code** — `SlateBar.load(variants, { placement: '...' })` syncs into that same storage when `placement` is passed (including `''` to clear).
+2. **Code** — `SlateBar.load(variants, { placement: '...' })` syncs into that same storage when `placement` is passed.
 
 3. When suggesting edits, **write placement text the user can paste** if they have not filled it yet.
 

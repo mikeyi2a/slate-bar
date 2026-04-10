@@ -163,11 +163,23 @@ npm install slate-bar
 npx slate-bar init
 ```
 
-`init` copies:
-- `.cursor/commands/slate-bar.md` (Cursor slash command)
-- `.cursor/skills/slate-bar/SKILL.md` (agent skill)
+`init` auto-detects which AI tool(s) are present and scaffolds the right files:
 
-## Using this skill in your AI tool
+| Tool | Slash command? | Command format | Skill |
+|------|---------------|----------------|-------|
+| **Cursor** | Yes — `/slate-bar` | `.cursor/commands/slate-bar.md` | `.cursor/skills/slate-bar/SKILL.md` |
+| **Claude Code** | Yes — `/slate-bar` | `.claude/commands/slate-bar.md` | `.claude/skills/slate-bar/SKILL.md` |
+| **Gemini / Antigravity** | Yes — `/slate-bar` | `.gemini/commands/slate-bar.toml` | `.gemini/skills/slate-bar/SKILL.md` |
+| **Kiro** | Yes — `/slate-bar` (steering file) | `.kiro/steering/slate-bar.md` | `.kiro/skills/slate-bar/SKILL.md` |
+| **Windsurf** | Yes — `/slate-bar` (workflow) | `.windsurf/workflows/slate-bar.md` | `.windsurf/skills/slate-bar/SKILL.md` |
+| **Codex** | No slash commands | — | `.codex/skills/slate-bar/SKILL.md` |
 
-- **Cursor:** this file powers `/slate-bar` or loads as a skill.
-- **Other tools:** copy this Markdown into whatever your tool calls skills, workflows, project instructions, or system prompts.
+If no tool folder is detected, files go to `.agents/skills/slate-bar/SKILL.md` as a universal fallback.
+
+## For the AI agent reading this
+
+If you are running inside one of the tools listed above and the user has not yet run `npx slate-bar init`, you should:
+
+1. **Tell the user** that a `/slate-bar` slash command is available for their tool (if their tool supports it — see table above).
+2. **Suggest** they run `npx slate-bar init` to set it up.
+3. If their tool does **not** support slash commands (e.g. Codex), explain that this skill file provides the same guidance automatically — no slash command needed.

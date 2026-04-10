@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>slate-bar demo</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #fafafa;
+        color: #111;
+      }
+      header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e5e5e5;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 style="margin: 0; font-size: 1.25rem">slate-bar demo</h1>
+      <p style="margin: 0.5rem 0 0; color: #666; font-size: 0.875rem">
+        Use the floating bar at the bottom to switch variants. The preview mounts after the last
+        <code>&lt;section&gt;</code> (or in <code>#slate-preview</code> if you add it).
+      </p>
+    </header>
+    <section style="padding: 2rem">
+      <h2>Landing content</h2>
+      <p>This is a fake section so the library can insert the preview after it.</p>
+    </section>
+    <section style="padding: 2rem; background: #fff">
+      <h2>Another section</h2>
+      <p>Variant HTML will appear below this block.</p>
+    </section>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
